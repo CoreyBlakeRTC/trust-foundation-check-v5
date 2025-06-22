@@ -1,0 +1,8 @@
+[build]
+  functions = "functions"
+
+[functions]
+  directory = "functions"
+
+# Trust Foundation Check v5 Configuration
+# Ensures Netlify properly recognizes serverless functions
