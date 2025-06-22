@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Foundation Check</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #414042;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(65, 64, 66, 0.1);
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #11ACD0;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 24px;
+            color: #414042;
+            font-weight: 600;
+        }
+
+        .intro-text, .thank-you-text {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            color: #414042;
+        }
+
+        .question-container {
+            min-height: 300px;
+        }
+
+        .question-number {
+            font-size: 14px;
+            color: #11ACD0;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            line-height: 1.5;
+            margin-bottom: 32px;
+            color: #414042;
+        }
+
+        .scale-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .scale-option {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            border: 2px solid #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #ffffff;
+        }
+
+        .scale-option:hover {
+            border-color: #11ACD0;
+            background-color: #f8fbfc;
+        }
+
+        .scale-option.selected {
+            border-color: #11ACD0;
+            background-color: #e6f7fb;
+        }
+
+        .scale-option input[type="radio"] {
+            margin-right: 16px;
+            width: 20px;
+            height: 20px;
+            accent-color: #11ACD0;
+            cursor: pointer;
+        }
+
+        .scale-option label {
+            cursor: pointer;
+            font-size: 16px;
+            color: #414042;
+            flex: 1;
+        }
+
+        .scale-value {
+            font-weight: 600;
+            color: #f58357;
+            margin-left: 8px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 16px;
+        }
+
+        .button {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .button-primary {
+            background-color: #11ACD0;
+            color: white;
+        }
+
+        .button-primary:hover {
+            background-color: #0e95b5;
+            transform: translateY(-1px);
+        }
+
+        .button-secondary {
+            background-color: #f0f0f0;
+            color: #414042;
+        }
+
+        .button-secondary:hover {
+            background-color: #e5e5e5;
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .button:disabled:hover {
+            transform: none;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .submission-options {
+            margin-top: 24px;
+        }
+
+        .submission-option {
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 2px solid #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .submission-option:hover {
+            border-color: #11ACD0;
+            background-color: #f8fbfc;
+        }
+
+        .submission-option h3 {
+            font-size: 18px;
+            margin-bottom: 4px;
+            color: #414042;
+        }
+
+        .submission-option p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .results-preview {
+            background-color: #f8f8f8;
+            padding: 24px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            max-height: 500px;
+            overflow-y: auto;
+            display: none;
+            border: 1px solid #e0e0e0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .team-visualization {
+            background-color: #f8fbfc;
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+            border-left: 4px solid #11ACD0;
+        }
+
+        .emphasis-box {
+            background-color: #fff8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #f58357;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                max-width: 100%;
+                border-radius: 8px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .question-text {
+                font-size: 18px;
+            }
+
+            .scale-option {
+                padding: 12px 16px;
+            }
+
+            .button {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+            
+            /* Stack columns on mobile */
+            #contactFormScreen div[style*="display: flex"] {
+                flex-direction: column !important;
+                gap: 24px !important;
+            }
+            
+            #contactFormScreen div[style*="flex: 1"] {
+                min-width: 100% !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .content {
+                padding: 16px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .intro-text, .thank-you-text {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="content">
+            <!-- Welcome Screen -->
+            <div class="screen active" id="welcomeScreen">
+                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+                    <img src="./rtc-logo-circle-90K-300x300.png" alt="RTC Logo" style="width: 40px; height: 40px; margin-right: 12px;">
+                    <h1 style="margin: 0;">Welcome to the Trust Foundation Check</h1>
+                </div>
+                
+                <div class="intro-text">
+                    <p style="margin-bottom: 16px;"><strong>This assessment is a mirror, not a window.</strong> It will only reflect what you're willing to see.</p>
+                    
+                    <h2 style="margin-bottom: 12px; color: #11ACD0; font-size: 20px;">The Questions</h2>
+                    
+                    <p style="margin-bottom: 16px;">You'll explore 45 questions through multiple lenses—what you observe, what you experience, and what's possible when trust is present. Some questions will feel affirming. Others might sting with recognition. All are designed to help you see clearly.</p>
+                    
+                    <div style="background-color: #f8fbfc; padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 4px solid #11ACD0;">
+                        <p style="margin: 0;"><strong>Rating Scale:</strong> Never · Rarely · Sometimes · Often · Almost Always</p>
+                    </div>
+                    
+                    <h2 style="margin-bottom: 12px; color: #11ACD0; font-size: 20px;">Before you begin:</h2>
+                    
+                    <p style="margin-bottom: 16px;">Please hold in your mind the specific team you directly lead—the (typically) 3-10 people who meet with you regularly and whose performance you're responsible for. When we ask about "team members" or patterns, we mean THIS specific group.</p>
+                    
+                    <div class="emphasis-box" style="padding: 16px; margin: 16px 0;">
+                        <p style="margin: 0;"><strong>A crucial reminder:</strong> In trust dynamics, one significant fracture can overshadow many strengths. As you reflect on these questions, we encourage you to resist minimizing challenging relationships and persistent problems. A single broken trust-link impacts the entire chain.</p>
+                        
+                        <p style="margin-top: 10px; font-style: italic;">If you find yourself thinking "it's not that bad," you might ask yourself: <strong>Would my team agree?</strong></p>
+                    </div>
+                    
+                    <p style="margin-top: 16px; text-align: center; font-style: italic; font-size: 18px;">Take a breath. Think of your team. Begin when ready.</p>
+                </div>
+                
+                <div class="button-container">
+                    <div></div>
+                    <button class="button button-primary" onclick="startQuiz()">Begin Assessment</button>
+                </div>
+            </div>
+
+
+            <!-- Quiz Screen -->
+            <div class="screen" id="quizScreen">
+                <div class="question-container">
+                    <div class="question-number" id="questionNumber"></div>
+                    <div class="question-text" id="questionText"></div>
+                    <div class="scale-container" id="scaleContainer"></div>
+                </div>
+                <div class="button-container">
+                    <button class="button button-secondary" id="prevButton" onclick="previousQuestion()">Previous</button>
+                    <button class="button button-primary" id="nextButton" onclick="nextQuestion()" disabled>Next</button>
+                </div>
+                <div class="progress-text" id="progressText"></div>
+            </div>
+
+            <!-- Contact Form Screen -->
+            <div class="screen" id="contactFormScreen">
+                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                    <img src="./rtc-logo-circle-90K-300x300.png" alt="RTC Logo" style="width: 32px; height: 32px; margin-right: 10px;">
+                    <h1 style="margin: 0; font-size: 24px;">Get your Trust Foundation Check Report</h1>
+                </div>
+                
+                <div style="display: flex; gap: 40px; align-items: flex-start;">
+                    <!-- Left Column - Benefits -->
+                    <div style="flex: 1; min-width: 45%;">
+                        <p style="margin-bottom: 20px; font-size: 16px;">Congratulations on completing the assessment! Your personalized report will provide actionable insights.</p>
+                        
+                        <h2 style="margin-bottom: 16px; color: #11ACD0; font-size: 18px;">Your report includes:</h2>
+                        
+                        <ul style="margin: 0; padding-left: 20px; line-height: 1.6; font-size: 15px;">
+                            <li style="margin-bottom: 8px;"><strong>Your trust strengths</strong>—what's working beautifully in your culture</li>
+                            <li style="margin-bottom: 8px;"><strong>Your unique trust-challenge pattern</strong> among 84 possible combinations</li>
+                            <li style="margin-bottom: 8px;"><strong>How your top 3 challenges interconnect</strong>, creating your current dynamic</li>
+                            <li style="margin-bottom: 8px;"><strong>Your unconscious contribution</strong>—how you might unknowingly reinforce patterns</li>
+                            <li style="margin-bottom: 8px;"><strong>What needs to shift</strong> for psychological safety to deepen</li>
+                            <li style="margin-bottom: 8px;"><strong>One concrete action</strong> you can take immediately</li>
+                            <li style="margin-bottom: 8px;"><strong>Recommended pathways forward</strong>, from simple steps to transformation</li>
+                        </ul>
+                        
+                        <p style="margin-top: 20px; font-size: 14px; color: #666;">Report delivered within 24 hours.</p>
+                    </div>
+                    
+                    <!-- Right Column - Form -->
+                    <div style="flex: 1; min-width: 45%;">
+                        <form id="resultsForm" name="trust-assessment-results" method="POST" data-netlify="true" action="?success=true">
+                            <input type="hidden" name="form-name" value="trust-assessment-results">
+                            <input type="hidden" name="assessment-data" id="assessmentData">
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label for="fullName" style="display: block; margin-bottom: 8px; font-weight: 600; color: #414042; font-size: 14px;">Full Name *</label>
+                                <input type="text" id="fullName" name="full-name" required 
+                                       style="width: 100%; padding: 12px 16px; border: 2px solid #f0f0f0; border-radius: 8px; font-size: 16px; color: #414042; background: white; box-sizing: border-box;">
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label for="email" style="display: block; margin-bottom: 8px; font-weight: 600; color: #414042; font-size: 14px;">Email Address *</label>
+                                <input type="email" id="email" name="email" required 
+                                       style="width: 100%; padding: 12px 16px; border: 2px solid #f0f0f0; border-radius: 8px; font-size: 16px; color: #414042; background: white; box-sizing: border-box;">
+                            </div>
+                            
+                            <div style="margin-bottom: 24px;">
+                                <label for="company" style="display: block; margin-bottom: 8px; font-weight: 600; color: #414042; font-size: 14px;">Company Name *</label>
+                                <input type="text" id="company" name="company" required 
+                                       style="width: 100%; padding: 12px 16px; border: 2px solid #f0f0f0; border-radius: 8px; font-size: 16px; color: #414042; background: white; box-sizing: border-box;">
+                            </div>
+                            
+                            <button type="submit" class="button button-primary" style="width: 100%; justify-content: center;">Send My Report</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thank You Screen -->
+            <div class="screen" id="thankYouScreen">
+                <h1>Thank You!</h1>
+                <div class="thank-you-text">
+                    <p>Your Trust Foundation Check assessment has been successfully submitted to Round Table Companies for analysis.</p>
+                    <p style="margin-top: 20px;">You will receive your personalized report within 24 hours at the email address you provided.</p>
+                    <p style="margin-top: 20px; padding: 20px; background-color: #f8fbfc; border-radius: 8px; border-left: 4px solid #11ACD0;">
+                        <strong>What's Next:</strong> Your comprehensive report will include your trust strengths, challenge patterns, and specific recommendations for building psychological safety in your team.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz data - v4 questions
+        const questions = [
+            // 1. Inauthenticity
+            { 
+                text: "One or more team members' inability to let down their guard affects our ability to address real issues.",
+                reverseScored: false,
+                category: "Inauthenticity",
+                type: "Team behavior"
+            },
+            {
+                text: "I feel safe to express myself authentically with this team.",
+                reverseScored: true,
+                category: "Inauthenticity",
+                type: "Personal experience"
+            },
+            {
+                text: "Members of my team openly acknowledge when they don't have all the answers.",
+                reverseScored: true,
+                category: "Inauthenticity",
+                type: "Psychological Safety"
+            },
+            {
+                text: "Our team meetings conclude with surface agreement while deeper concerns remain unvoiced.",
+                reverseScored: false,
+                category: "Inauthenticity",
+                type: "Relational impact"
+            },
+            {
+                text: "Team members share personal challenges or mistakes without fear of judgment.",
+                reverseScored: true,
+                category: "Inauthenticity",
+                type: "Hope Glimpse"
+            },
+            
+            // 2. Undercurrent of Negativity
+            {
+                text: "One or more team members' persistent complaints dominate our conversations.",
+                reverseScored: false,
+                category: "Undercurrent of Negativity",
+                type: "Team behavior"
+            },
+            {
+                text: "I find myself getting pulled into negative spirals during team interactions.",
+                reverseScored: false,
+                category: "Undercurrent of Negativity",
+                type: "Personal experience"
+            },
+            {
+                text: "Team members transform complaints into constructive suggestions.",
+                reverseScored: true,
+                category: "Undercurrent of Negativity",
+                type: "Psychological Safety"
+            },
+            {
+                text: "Our team's energy drains quickly when certain topics arise.",
+                reverseScored: false,
+                category: "Undercurrent of Negativity",
+                type: "Relational impact"
+            },
+            {
+                text: "We celebrate wins as enthusiastically as we discuss challenges.",
+                reverseScored: true,
+                category: "Undercurrent of Negativity",
+                type: "Hope Glimpse"
+            },
+            
+            // 3. Lack of Follow-Through
+            {
+                text: "One or more team members' pattern of unfulfilled commitments erodes our collective reliability.",
+                reverseScored: false,
+                category: "Lack of Follow-Through",
+                type: "Team behavior"
+            },
+            {
+                text: "I hesitate to depend on agreements made in our team meetings.",
+                reverseScored: false,
+                category: "Lack of Follow-Through",
+                type: "Personal experience"
+            },
+            {
+                text: "Team members proactively communicate when commitments need to be renegotiated.",
+                reverseScored: true,
+                category: "Lack of Follow-Through",
+                type: "Psychological Safety"
+            },
+            {
+                text: "Our team's momentum stalls as we wait for overdue deliverables.",
+                reverseScored: false,
+                category: "Lack of Follow-Through",
+                type: "Relational impact"
+            },
+            {
+                text: "We complete what we promise to each other.",
+                reverseScored: true,
+                category: "Lack of Follow-Through",
+                type: "Hope Glimpse"
+            },
+            
+            // 4. Reluctance to Take on Challenges
+            {
+                text: "One or more team members consistently deflect growth opportunities.",
+                reverseScored: false,
+                category: "Reluctance to Take on Challenges",
+                type: "Team behavior"
+            },
+            {
+                text: "I support my team by taking on difficult challenges",
+                reverseScored: true,
+                category: "Reluctance to Take on Challenges",
+                type: "Personal experience"
+            },
+            {
+                text: "Team members encourage each other to push beyond their comfort zones.",
+                reverseScored: true,
+                category: "Reluctance to Take on Challenges",
+                type: "Psychological Safety"
+            },
+            {
+                text: "Our team defaults to safe, familiar approaches even when innovation is called for.",
+                reverseScored: false,
+                category: "Reluctance to Take on Challenges",
+                type: "Relational impact"
+            },
+            {
+                text: "We embrace ambitious challenges as a team knowing we will support one another through failure.",
+                reverseScored: true,
+                category: "Reluctance to Take on Challenges",
+                type: "Hope Glimpse"
+            },
+            
+            // 5. Excessive Self-Reliance
+            {
+                text: "One or more team members work in isolation even when collaboration would benefit everyone.",
+                reverseScored: false,
+                category: "Excessive Self-Reliance",
+                type: "Team behavior"
+            },
+            {
+                text: "I find myself solving problems alone rather than asking my team for help.",
+                reverseScored: false,
+                category: "Excessive Self-Reliance",
+                type: "Personal experience"
+            },
+            {
+                text: "Team members immediately reach out to one another when they get stuck.",
+                reverseScored: true,
+                category: "Excessive Self-Reliance",
+                type: "Psychological Safety"
+            },
+            {
+                text: "Our team misses opportunities to leverage each other's strengths.",
+                reverseScored: false,
+                category: "Excessive Self-Reliance",
+                type: "Relational impact"
+            },
+            {
+                text: "We celebrate interdependence as a sign of trust and strength.",
+                reverseScored: true,
+                category: "Excessive Self-Reliance",
+                type: "Hope Glimpse"
+            },
+            
+            // 6. Micromanaging
+            {
+                text: "One or more team members need to be involved in others' areas of responsibility.",
+                reverseScored: false,
+                category: "Micromanaging",
+                type: "Team behavior"
+            },
+            {
+                text: "My own autonomy feels restricted by one or more team members' need for involvement.",
+                reverseScored: false,
+                category: "Micromanaging",
+                type: "Personal experience"
+            },
+            {
+                text: "Team members share challenges without fear of someone wanting to take over.",
+                reverseScored: true,
+                category: "Micromanaging",
+                type: "Psychological Safety"
+            },
+            {
+                text: "Our team's creativity suffers under excessive processes.",
+                reverseScored: false,
+                category: "Micromanaging",
+                type: "Relational impact"
+            },
+            {
+                text: "We grant each other freedom to achieve outcomes in our own ways.",
+                reverseScored: true,
+                category: "Micromanaging",
+                type: "Hope Glimpse"
+            },
+            
+            // 7. Emotional Volatility
+            {
+                text: "One or more team members' emotional reactions create disruptions.",
+                reverseScored: false,
+                category: "Emotional Volatility",
+                type: "Team behavior"
+            },
+            {
+                text: "I brace myself for potentially intense emotional reactions from one or more team members.",
+                reverseScored: false,
+                category: "Emotional Volatility",
+                type: "Personal experience"
+            },
+            {
+                text: "Team members express strong emotions in ways that deepen rather than derail our discussions.",
+                reverseScored: true,
+                category: "Emotional Volatility",
+                type: "Psychological Safety"
+            },
+            {
+                text: "Our team walks on eggshells to avoid triggering volatile responses.",
+                reverseScored: false,
+                category: "Emotional Volatility",
+                type: "Relational impact"
+            },
+            {
+                text: "We navigate charged moments with grace and mutual respect.",
+                reverseScored: true,
+                category: "Emotional Volatility",
+                type: "Hope Glimpse"
+            },
+            
+            // 8. Information Hoarding
+            {
+                text: "One or more team members hold back information that would benefit the whole team.",
+                reverseScored: false,
+                category: "Information Hoarding",
+                type: "Team behavior"
+            },
+            {
+                text: "I freely share knowledge and resources with my teammates before being asked.",
+                reverseScored: true,
+                category: "Information Hoarding",
+                type: "Personal experience"
+            },
+            {
+                text: "Team members proactively share information with me.",
+                reverseScored: true,
+                category: "Information Hoarding",
+                type: "Psychological Safety"
+            },
+            {
+                text: "We discover crucial information only after decisions have been made.",
+                reverseScored: false,
+                category: "Information Hoarding",
+                type: "Relational impact"
+            },
+            {
+                text: "We treat information as a shared resource that multiplies when offered freely.",
+                reverseScored: true,
+                category: "Information Hoarding",
+                type: "Hope Glimpse"
+            },
+            
+            // 9. Closed-Mindedness
+            {
+                text: "One or more team members reacts negatively to new ideas before fully considering them.",
+                reverseScored: false,
+                category: "Closed-Mindedness",
+                type: "Team behavior"
+            },
+            {
+                text: "I catch myself resisting suggestions that challenge my preferences.",
+                reverseScored: false,
+                category: "Closed-Mindedness",
+                type: "Personal experience"
+            },
+            {
+                text: "Team members build on each other's ideas with \"yes, and\" energy.",
+                reverseScored: true,
+                category: "Closed-Mindedness",
+                type: "Psychological Safety"
+            },
+            {
+                text: "Our team's growth slows or stagnates due to familiar approaches going unchallenged.",
+                reverseScored: false,
+                category: "Closed-Mindedness",
+                type: "Relational impact"
+            },
+            {
+                text: "When we are all together, we approach different perspectives with genuine curiosity and openness.",
+                reverseScored: true,
+                category: "Closed-Mindedness",
+                type: "Hope Glimpse"
+            }
+        ];
+
+        // Shuffle questions
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let responses = new Array(questions.length).fill(null);
+        let shuffledQuestions = [];
+        let questionOrder = [];
+
+        // Initialize quiz
+        function initializeQuiz() {
+            const indices = Array.from({length: questions.length}, (_, i) => i);
+            questionOrder = shuffleArray(indices);
+            shuffledQuestions = questionOrder.map(i => questions[i]);
+            
+            // Load saved progress if exists
+            const savedProgress = localStorage.getItem('quizProgress');
+            if (savedProgress) {
+                const progress = JSON.parse(savedProgress);
+                if (progress.questionOrder && progress.questionOrder.length === questions.length) {
+                    questionOrder = progress.questionOrder;
+                    shuffledQuestions = questionOrder.map(i => questions[i]);
+                    responses = progress.responses || new Array(questions.length).fill(null);
+                    currentQuestionIndex = progress.currentIndex || 0;
+                }
+            }
+        }
+
+        // Save progress
+        function saveProgress() {
+            localStorage.setItem('quizProgress', JSON.stringify({
+                questionOrder: questionOrder,
+                responses: responses,
+                currentIndex: currentQuestionIndex
+            }));
+        }
+
+        // Clear progress
+        function clearProgress() {
+            localStorage.removeItem('quizProgress');
+        }
+
+        // Start quiz
+        function startQuiz() {
+            document.getElementById('welcomeScreen').classList.remove('active');
+            document.getElementById('quizScreen').classList.add('active');
+            displayQuestion();
+            updateProgress();
+        }
+
+        // Display current question
+        function displayQuestion() {
+            const question = shuffledQuestions[currentQuestionIndex];
+            const originalIndex = questionOrder[currentQuestionIndex];
+            
+            document.getElementById('questionNumber').textContent = `Question ${currentQuestionIndex + 1} of 45`;
+            document.getElementById('questionText').textContent = question.text;
+            
+            const scaleContainer = document.getElementById('scaleContainer');
+            scaleContainer.innerHTML = '';
+            
+            const scaleOptions = [
+                { value: 1, label: 'Never' },
+                { value: 2, label: 'Rarely' },
+                { value: 3, label: 'Sometimes' },
+                { value: 4, label: 'Often' },
+                { value: 5, label: 'Almost Always' }
+            ];
+            
+            scaleOptions.forEach(option => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'scale-option';
+                if (responses[originalIndex] === option.value) {
+                    optionDiv.classList.add('selected');
+                }
+                
+                optionDiv.innerHTML = `
+                    <input type="radio" 
+                           id="option${option.value}" 
+                           name="question${currentQuestionIndex}" 
+                           value="${option.value}"
+                           ${responses[originalIndex] === option.value ? 'checked' : ''}>
+                    <label for="option${option.value}">${option.label}</label>
+                    <span class="scale-value">(${option.value})</span>
+                `;
+                
+                optionDiv.addEventListener('click', function(e) {
+                    if (e.target.type !== 'radio') {
+                        const radio = this.querySelector('input[type="radio"]');
+                        radio.checked = true;
+                        selectOption(parseInt(radio.value));
+                    }
+                });
+                
+                const radio = optionDiv.querySelector('input[type="radio"]');
+                radio.addEventListener('change', function() {
+                    selectOption(parseInt(this.value));
+                });
+                
+                scaleContainer.appendChild(optionDiv);
+            });
+            
+            // Update button states
+            document.getElementById('prevButton').disabled = currentQuestionIndex === 0;
+            document.getElementById('nextButton').textContent = 
+                currentQuestionIndex === questions.length - 1 ? 'Complete' : 'Next';
+            document.getElementById('nextButton').disabled = responses[originalIndex] === null;
+        }
+
+        // Select option
+        function selectOption(value) {
+            const originalIndex = questionOrder[currentQuestionIndex];
+            responses[originalIndex] = value;
+            
+            // Update UI
+            document.querySelectorAll('.scale-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`input[value="${value}"]`).parentElement.classList.add('selected');
+            
+            // Enable next button
+            document.getElementById('nextButton').disabled = false;
+            
+            saveProgress();
+        }
+
+        // Navigate to next question
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+                updateProgress();
+            } else {
+                completeQuiz();
+            }
+        }
+
+        // Navigate to previous question
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+                updateProgress();
+            }
+        }
+
+        // Update progress bar and text
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            
+            const answered = responses.filter(r => r !== null).length;
+            document.getElementById('progressText').textContent = 
+                `${answered} of 45 questions answered`;
+        }
+
+        // Complete quiz
+        function completeQuiz() {
+            document.getElementById('quizScreen').classList.remove('active');
+            document.getElementById('contactFormScreen').classList.add('active');
+            prepareFormSubmission();
+            clearProgress();
+        }
+        
+        // Prepare form data for submission
+        function prepareFormSubmission() {
+            const formattedResults = formatResultsForSubmission();
+            document.getElementById('assessmentData').value = formattedResults;
+            
+            // TEMPORARILY DISABLED: Dual processing to fix form submission
+            // For now, let the form submit normally to Netlify
+            // Once basic submission works, we'll add back the scoring function
+            
+            /* ORIGINAL DUAL PROCESSING CODE - COMMENTED OUT FOR DEBUGGING
+            document.getElementById('resultsForm').addEventListener('submit', function(e) {
+                e.preventDefault(); // Prevent default to handle dual processing
+                
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                
+                // Show enhanced loading state
+                submitButton.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <div style="width: 16px; height: 16px; border: 2px solid #ffffff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        Processing assessment...
+                    </div>
+                `;
+                submitButton.disabled = true;
+                
+                // Add spinning animation CSS if not exists
+                if (!document.getElementById('spinnerCSS')) {
+                    const style = document.createElement('style');
+                    style.id = 'spinnerCSS';
+                    style.textContent = `
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+                
+                // Execute dual processing
+                handleDualProcessing(this, submitButton, originalText);
+            });
+            */
+        }
+        
+        // Handle both Netlify form submission and scoring function
+        async function handleDualProcessing(form, submitButton, originalText) {
+            const formData = new FormData(form);
+            const assessmentData = formData.get('assessment-data');
+            
+            // Prepare data for both processes
+            const netlifyData = new URLSearchParams(formData);
+            const scoringData = {
+                name: formData.get('full-name'),
+                email: formData.get('email'),
+                company: formData.get('company'),
+                assessmentData: assessmentData
+            };
+            
+            console.log('🚀 Starting dual processing...', {
+                netlifyDataSize: netlifyData.toString().length,
+                scoringDataSize: JSON.stringify(scoringData).length
+            });
+            
+            try {
+                // Process both simultaneously
+                const [netlifyResult, scoringResult] = await Promise.allSettled([
+                    // Netlify form submission (email backup)
+                    submitToNetlify(netlifyData),
+                    // Scoring function (automation)
+                    submitToScoringFunction(scoringData)
+                ]);
+                
+                console.log('📊 Processing results:', {
+                    netlify: netlifyResult.status,
+                    scoring: scoringResult.status
+                });
+                
+                // Handle results
+                const netlifySuccess = netlifyResult.status === 'fulfilled';
+                const scoringSuccess = scoringResult.status === 'fulfilled';
+                
+                if (netlifySuccess && scoringSuccess) {
+                    console.log('✅ Both processes successful');
+                    // Both succeeded - show success page
+                    showSuccessPage('both');
+                } else if (netlifySuccess) {
+                    console.log('⚠️ Email backup successful, scoring failed');
+                    console.error('Scoring error:', scoringResult.reason);
+                    // Email backup worked
+                    showSuccessPage('email');
+                } else if (scoringSuccess) {
+                    console.log('⚠️ Scoring successful, email backup failed');
+                    console.error('Netlify error:', netlifyResult.reason);
+                    // Scoring worked
+                    showSuccessPage('scoring');
+                } else {
+                    console.log('❌ Both processes failed');
+                    console.error('Netlify error:', netlifyResult.reason);
+                    console.error('Scoring error:', scoringResult.reason);
+                    // Both failed
+                    showErrorPage(netlifyResult.reason, scoringResult.reason);
+                }
+                
+            } catch (error) {
+                console.error('❌ Dual processing error:', error);
+                showErrorPage(error.message, 'Unknown error');
+            }
+        }
+        
+        // Submit to Netlify for email backup
+        async function submitToNetlify(formData) {
+            const response = await fetch('/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Netlify submission failed: ${response.status}`);
+            }
+            
+            return response;
+        }
+        
+        // Submit to scoring function for automation
+        async function submitToScoringFunction(data) {
+            const response = await fetch('/.netlify/functions/score-assessment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Scoring function failed: ${response.status} - ${errorText}`);
+            }
+            
+            const result = await response.json();
+            console.log('🎯 Scoring result:', result);
+            
+            return result;
+        }
+        
+        // Show success page with appropriate messaging
+        function showSuccessPage(type) {
+            document.getElementById('contactFormScreen').classList.remove('active');
+            
+            // Update thank you message based on what succeeded
+            const thankYouText = document.querySelector('#thankYouScreen .thank-you-text');
+            if (thankYouText) {
+                let message = '';
+                
+                switch (type) {
+                    case 'both':
+                        message = `
+                            <p>🎉 <strong>Success!</strong> Your Trust Foundation Check assessment has been processed successfully.</p>
+                            <p style="margin-top: 16px;">✅ <strong>Email backup sent</strong> - You'll receive the raw data for your records</p>
+                            <p style="margin-top: 8px;">✅ <strong>Assessment scored</strong> - Results are being prepared for your personalized report</p>
+                            <p style="margin-top: 20px;">You will receive your comprehensive Trust Foundation Check report within 24 hours at the email address you provided.</p>
+                        `;
+                        break;
+                    case 'email':
+                        message = `
+                            <p><strong>Assessment submitted successfully!</strong></p>
+                            <p style="margin-top: 16px;">✅ Your assessment data has been emailed to Round Table Companies</p>
+                            <p style="margin-top: 8px;">⚠️ Automated processing encountered an issue, but manual processing will ensure you receive your report</p>
+                            <p style="margin-top: 20px;">You will receive your personalized report within 24 hours.</p>
+                        `;
+                        break;
+                    case 'scoring':
+                        message = `
+                            <p><strong>Assessment processed successfully!</strong></p>
+                            <p style="margin-top: 16px;">✅ Your assessment has been scored and is being prepared for report generation</p>
+                            <p style="margin-top: 8px;">⚠️ Email backup had an issue, but your data is safely processed</p>
+                            <p style="margin-top: 20px;">You will receive your personalized report shortly.</p>
+                        `;
+                        break;
+                }
+                
+                thankYouText.innerHTML = message + `
+                    <p style="margin-top: 20px; padding: 20px; background-color: #f8fbfc; border-radius: 8px; border-left: 4px solid #11ACD0;">
+                        <strong>What's Next:</strong> Your comprehensive report will include your trust strengths, challenge patterns, and specific recommendations for building psychological safety in your team.
+                    </p>
+                `;
+            }
+            
+            document.getElementById('thankYouScreen').classList.add('active');
+        }
+        
+        // Show error page with retry option
+        function showErrorPage(netlifyError, scoringError) {
+            const contactForm = document.getElementById('contactFormScreen');
+            const submitButton = contactForm.querySelector('button[type="submit"]');
+            
+            // Reset button
+            submitButton.textContent = 'Retry Submission';
+            submitButton.disabled = false;
+            
+            // Show error message
+            let errorContainer = contactForm.querySelector('.error-message');
+            if (!errorContainer) {
+                errorContainer = document.createElement('div');
+                errorContainer.className = 'error-message';
+                contactForm.querySelector('.content').insertBefore(errorContainer, contactForm.querySelector('form'));
+            }
+            
+            errorContainer.innerHTML = `
+                <div style="background-color: #fff8f0; border-left: 4px solid #f58357; padding: 16px; margin-bottom: 20px; border-radius: 8px;">
+                    <h3 style="color: #f58357; margin-bottom: 8px;">Submission Error</h3>
+                    <p style="margin-bottom: 12px;">We encountered an issue processing your assessment. Please try again.</p>
+                    <details style="font-size: 14px; color: #666;">
+                        <summary style="cursor: pointer;">Technical Details</summary>
+                        <p style="margin-top: 8px;"><strong>Email system:</strong> ${netlifyError}</p>
+                        <p><strong>Scoring system:</strong> ${scoringError}</p>
+                    </details>
+                </div>
+            `;
+        }
+        
+        // Format results for submission (clean version for email)
+        function formatResultsForSubmission() {
+            const now = new Date();
+            let results = `TRUST FOUNDATION CHECK RESULTS - v5\n`;
+            results += `Submitted: ${now.toLocaleDateString()} at ${now.toLocaleTimeString()}\n\n`;
+            
+            results += `RESPONSES:\n`;
+            results += `----------\n\n`;
+            
+            questionOrder.forEach((originalIndex, displayIndex) => {
+                const question = questions[originalIndex];
+                const response = responses[originalIndex];
+                const reverseIndicator = question.reverseScored ? " (R)" : "";
+                
+                results += `Q${displayIndex + 1}${reverseIndicator}: ${question.text}\n`;
+                results += `Category: ${question.category} | Type: ${question.type}\n`;
+                results += `Response: ${response} - ${getResponseLabel(response)}\n\n`;
+            });
+            
+            results += `SUMMARY:\n`;
+            results += `Total questions: 45\n`;
+            results += `Questions answered: ${responses.filter(r => r !== null).length}\n`;
+            results += `Average score: ${calculateAverage()}\n`;
+            results += `Reverse-scored questions: 21 (47%)\n`;
+            
+            return results;
+        }
+
+        // Get response label
+        function getResponseLabel(value) {
+            const labels = {
+                1: 'Never',
+                2: 'Rarely',
+                3: 'Sometimes',
+                4: 'Often',
+                5: 'Almost Always'
+            };
+            return labels[value] || 'Not answered';
+        }
+
+        // Calculate average
+        function calculateAverage() {
+            const answered = responses.filter(r => r !== null);
+            if (answered.length === 0) return 'N/A';
+            const sum = answered.reduce((a, b) => a + b, 0);
+            return (sum / answered.length).toFixed(2);
+        }
+
+        // Initialize on load
+        initializeQuiz();
+        
+        // Check if we returned from a successful form submission
+        function checkForSuccess() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('success') === 'true') {
+                // Hide all screens and show thank you
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+                document.getElementById('thankYouScreen').classList.add('active');
+                
+                // Clean up the URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+        
+        // Check for success on page load
+        checkForSuccess();
+    </script>
+</body>
+</html>
