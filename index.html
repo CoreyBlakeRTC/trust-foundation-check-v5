@@ -403,7 +403,7 @@
                     
                     <!-- Right Column - Form -->
                     <div style="flex: 1; min-width: 45%;">
-                        <form id="resultsForm" name="trust-assessment-results" method="POST" data-netlify="true" action="?success=true">
+                        <form id="resultsForm" name="trust-assessment-results" method="POST" data-netlify="true" action="/">
                             <input type="hidden" name="form-name" value="trust-assessment-results">
                             <input type="hidden" name="assessment-data" id="assessmentData">
                             
@@ -913,11 +913,38 @@
             const formattedResults = formatResultsForSubmission();
             document.getElementById('assessmentData').value = formattedResults;
             
-            // TEMPORARILY DISABLED: Dual processing to fix form submission
-            // For now, let the form submit normally to Netlify
-            // Once basic submission works, we'll add back the scoring function
+            // NEW SAFER APPROACH: Let form submit normally AND call scoring function
+            // This approach doesn't block the form submission
+            document.getElementById('resultsForm').addEventListener('submit', function(e) {
+                // Only proceed if form is valid
+                if (!this.checkValidity()) return;
+                
+                // Prepare scoring data
+                const formData = new FormData(this);
+                const scoringData = {
+                    name: formData.get('full-name'),
+                    email: formData.get('email'),
+                    company: formData.get('company'),
+                    assessmentData: formData.get('assessment-data')
+                };
+                
+                // Call scoring function asynchronously (fire and forget)
+                // This won't block or prevent the form submission
+                submitToScoringFunction(scoringData)
+                    .then(result => {
+                        console.log('✅ Scoring function successful:', result);
+                    })
+                    .catch(error => {
+                        console.error('⚠️ Scoring function error (non-blocking):', error);
+                        // Don't show error to user - form submission continues
+                    });
+                
+                // Let form submit normally to Netlify
+                // No preventDefault() - form continues to submit as usual
+                console.log('📧 Form submitting to Netlify...');
+            });
             
-            /* ORIGINAL DUAL PROCESSING CODE - COMMENTED OUT FOR DEBUGGING
+            /* ORIGINAL DUAL PROCESSING CODE - KEPT FOR REFERENCE
             document.getElementById('resultsForm').addEventListener('submit', function(e) {
                 e.preventDefault(); // Prevent default to handle dual processing
                 
